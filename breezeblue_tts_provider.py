@@ -25,8 +25,12 @@ PROVIDER_DISPLAY_NAME = "BreezeBlue TTS"
 DEFAULT_API_BASE = "https://api.breeze.blue"
 DEFAULT_LANGUAGE = "zh"
 DEFAULT_GUIDANCE = 3.5
+DEFAULT_SPEED = 1.0
 DEFAULT_TIMEOUT = 120
 DEFAULT_INSTRUCTIONS = (
+    "用正常聊天语速说话，自然口语，不要拖腔，不要唱。"
+)
+DEFAULT_SING_INSTRUCTIONS = (
     "用轻柔演唱口吻唱出歌词，有一点旋律起伏，不要念白播报腔。"
 )
 SING_TAG = "[唱歌]"
@@ -41,10 +45,11 @@ DEFAULT_CONFIG_TMPL: dict[str, Any] = {
     "language_code": DEFAULT_LANGUAGE,
     "instructions": DEFAULT_INSTRUCTIONS,
     "guidance_scale": DEFAULT_GUIDANCE,
+    "speed": DEFAULT_SPEED,
     "model_id": "",
     "timeout": DEFAULT_TIMEOUT,
-    "enable_sing_mode": True,
-    "auto_sing_tag": True,
+    "enable_sing_mode": False,
+    "auto_sing_tag": False,
     "proxy": "",
 }
 
@@ -55,6 +60,7 @@ _SCHEMA_FIELDS: dict[str, dict[str, Any]] = {
     "language_code": {"type": "string"},
     "instructions": {"type": "text"},
     "guidance_scale": {"type": "float"},
+    "speed": {"type": "float"},
     "model_id": {"type": "string"},
     "timeout": {"type": "int"},
     "enable_sing_mode": {"type": "bool"},
@@ -84,11 +90,16 @@ class ProviderBreezeBlueTTS(TTSProvider):
         except (TypeError, ValueError):
             self.guidance_scale = DEFAULT_GUIDANCE
         try:
+            self.speed = float(provider_config.get("speed", DEFAULT_SPEED))
+        except (TypeError, ValueError):
+            self.speed = DEFAULT_SPEED
+        self.speed = max(0.5, min(2.0, self.speed))
+        try:
             self.timeout = int(provider_config.get("timeout", DEFAULT_TIMEOUT))
         except (TypeError, ValueError):
             self.timeout = DEFAULT_TIMEOUT
-        self.enable_sing_mode = bool(provider_config.get("enable_sing_mode", True))
-        self.auto_sing_tag = bool(provider_config.get("auto_sing_tag", True))
+        self.enable_sing_mode = bool(provider_config.get("enable_sing_mode", False))
+        self.auto_sing_tag = bool(provider_config.get("auto_sing_tag", False))
         self.proxy = str(provider_config.get("proxy") or "").strip()
 
         client_kwargs: dict[str, Any] = {"timeout": self.timeout}
@@ -101,9 +112,10 @@ class ProviderBreezeBlueTTS(TTSProvider):
             self.set_model(self.model_id)
 
         logger.info(
-            "[breezeblue_tts] 初始化: base=%s voice_id=%s sing=%s auto_tag=%s",
+            "[breezeblue_tts] 初始化: base=%s voice_id=%s speed=%s sing=%s auto_tag=%s",
             self.api_base,
             self.voice_id or "(empty)",
+            self.speed,
             self.enable_sing_mode,
             self.auto_sing_tag,
         )
@@ -140,12 +152,15 @@ class ProviderBreezeBlueTTS(TTSProvider):
             "language_code": self.language_code,
             "voice_settings": {
                 "guidance_scale": self.guidance_scale,
+                "speed": self.speed,
             },
         }
-        # 唱歌模式或用户自定义了 instructions 时都带上
+        # 自定义 instructions 优先；唱歌模式用演唱口吻，否则用正常语速口语
         if self.instructions:
             body["instructions"] = self.instructions
         elif self.enable_sing_mode:
+            body["instructions"] = DEFAULT_SING_INSTRUCTIONS
+        else:
             body["instructions"] = DEFAULT_INSTRUCTIONS
         if self.model_id:
             body["model_id"] = self.model_id

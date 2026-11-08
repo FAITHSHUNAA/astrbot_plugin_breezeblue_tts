@@ -55,7 +55,7 @@ astrbot_plugin_breezeblue_tts\
   ├── metadata.yaml
   ├── requirements.txt
   ├── __init__.py
-  └── README_ZH.md
+  └── README.md
 ```
 
 也可用 AstrBot WebUI →「插件」→ 从本地 zip 安装 `astrbot_plugin_breezeblue_tts.zip`。
@@ -83,10 +83,11 @@ Launcher 里重启该实例，或关掉再开。日志中应出现类似：
 | `language_code` | ISO 639-1 | `zh` |
 | `instructions` | 表演说明（与正文同语言） | 默认演唱口吻中文 |
 | `guidance_scale` | 1.0–10.0 | `3.5` |
+| `speed` | 语速倍率 0.5–2.0（保音调） | `1.0`；嫌慢可试 `1.2`～`1.4` |
 | `model_id` | 可选；空则由服务端自动选 | 如 `breeze-tts-2` |
 | `timeout` | 秒 | `120` |
-| `enable_sing_mode` | 唱歌模式 | `true` |
-| `auto_sing_tag` | 无 `[唱歌]` 时自动前置 | `true` |
+| `enable_sing_mode` | 唱歌模式 | 默认 `false`（日常说话关） |
+| `auto_sing_tag` | 无 `[唱歌]` 时自动前置 | 默认 `false` |
 | `proxy` | 可选 HTTP 代理 | 空 |
 
 4. **启用**该提供商并保存。
@@ -103,7 +104,8 @@ Launcher 里重启该实例，或关掉再开。日志中应出现类似：
 ## 行为说明
 
 - `get_audio(text)` → 本地临时 **`.wav` 路径**（AstrBot TTSProvider 约定），NapCat / aiocqhttp 按现有通道发 record。
-- `enable_sing_mode=true` 且 `auto_sing_tag=true`，且文本中没有 `[唱歌]` / `(singing)` 时，自动变成：`[唱歌] 原文`。
+- 默认日常说话（`enable_sing_mode`/`auto_sing_tag` 为 false）。两者都开且文本无 `[唱歌]` / `(singing)` 时，自动变成：`[唱歌] 原文`。
+- `voice_settings.speed` 控制语速（默认 1.0）。
 - 文本超过 **1000** 字符会截断并打日志（BreezeBlue 默认上限）。
 - 鉴权只用 `xi-api-key`，**不要**再配 OpenAI TTS 或本机 18080 代理。
 
@@ -122,6 +124,11 @@ Key 错误或无权；检查控制台 Key 与余额。
 
 **404**  
 `voice_id` 错误，或 `api_base` 写成了带错误路径的地址。应只填 `https://api.breeze.blue`。
+
+**说话太慢/拖腔**  
+1. 把 `auto_sing_tag`、`enable_sing_mode` 关掉（平时别自动加 `[唱歌]`）。  
+2. `instructions` 改成：`用正常聊天语速说话，自然口语，不要拖腔，不要唱。`  
+3. `speed` 调到 `1.2`～`1.4`（API 范围 0.5–2.0）。保存后重测语音。
 
 **听起来仍像念**  
 打开 `enable_sing_mode`，确认 `instructions` 是演唱口吻，正文尽量短句歌词；也可手动写 `[唱歌] 歌词…`。这不是按谱真唱，只是「像在唱」。
