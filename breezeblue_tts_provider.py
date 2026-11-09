@@ -19,7 +19,7 @@ from astrbot.core.provider.register import (
 from astrbot.core.utils.astrbot_path import get_astrbot_temp_path
 
 PROVIDER_TYPE_NAME = "breezeblue_tts"
-PROVIDER_DESC = "BreezeBlue TTS（官方 API，支持 [唱歌] 标签）"
+PROVIDER_DESC = "BreezeBlue TTS（官方 API）"
 PROVIDER_DISPLAY_NAME = "BreezeBlue TTS"
 
 DEFAULT_API_BASE = "https://api.breeze.blue"

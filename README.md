@@ -9,7 +9,7 @@ POST https://api.breeze.blue/v1/text-to-speech/{voice_id}?output_format=wav
 Header: xi-api-key: <API Key>
 ```
 
-**不是** OpenAI `/v1/audio/speech` 兼容代理。可开启「唱歌模式」：自动在文本前加 `[唱歌]`，并带演唱口吻 `instructions`，听感像在唱（仍是 TTS 唱腔，不是按谱 SVS）。
+**不是** OpenAI `/v1/audio/speech` 兼容代理。默认按正常说话语速合成；可选配置里仍可手动开唱歌模式（默认关闭）。
 
 兼容 AstrBot **≥ 4.29.0**（含 Launcher ~4.29.x）。
 

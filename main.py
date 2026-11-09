@@ -20,7 +20,7 @@ except ImportError:  # 兼容非包方式加载
 @register(
     "astrbot_plugin_breezeblue_tts",
     "dafeiyu",
-    "通过 BreezeBlue 官方 TTS API 为 AstrBot 提供文字转语音（支持 [唱歌] 音频标签，听感像在唱）。",
+    "通过 BreezeBlue 官方 TTS API 为 AstrBot 提供文字转语音。",
     "1.0.0",
     "https://docs.breezeblue.ai/api-reference/text-to-speech/convert-text-to-speech",
 )

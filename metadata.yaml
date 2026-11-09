@@ -1,15 +1,11 @@
 name: astrbot_plugin_breezeblue_tts
-display_name: BreezeBlue TTS（官方 API / 唱歌标签）
-desc: 直接调用 BreezeBlue 官方 Text-to-Speech API（非 OpenAI 兼容代理），支持 [唱歌] 音频标签与演唱口吻 instructions，生成 wav 供 NapCat/aiocqhttp 发送语音。
-help: https://docs.breezeblue.ai/api-reference/text-to-speech/convert-text-to-speech
-version: 1.0.0
-short_desc: BreezeBlue 官方 TTS，支持像在唱的 [唱歌] 标签
-author: dafeiyu
-repo: ""
-social_link: https://docs.breezeblue.ai
-astrbot_version: ">=4.29.0"
+display_name: BreezeBlue TTS（官方 API）
+desc: 直接调用 BreezeBlue 官方 Text-to-Speech API（非 OpenAI 兼容代理），生成 wav 供 NapCat/aiocqhttp 发送语音。
+author: FAITHSHUNAA
+version: 0.1.1
+short_desc: BreezeBlue 官方 TTS
+repo: https://github.com/FAITHSHUNAA/astrbot_plugin_breezeblue_tts
 tags:
   - tts
-  - 文字转语音
   - breezeblue
-  - 唱歌
+  - voice
